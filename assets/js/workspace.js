@@ -5,7 +5,8 @@ window.NAH_STORE=(()=>{
     schema:'nicole-ops.workspace.v2',updatedAt:new Date().toISOString(),
     settings:{officeName:"Nicole's Operations Suite",salesProfessional:'Nicole Arbogast',storeNumber:'306',assistantName:'',storageMode:'session',setupDismissed:false,
       locations:['Receiving Rack','Main Rack','Shelf / Bin','Alteration Intake','Factory Return Area','Next-Day Staging','Shipping Rack','With Nicole','At Gegi','At Naziha','At Factory','Cleaner / Repair','Client Received','Verify Location'],
-      providers:['Gegi','Naziha','In Shop','EA / English American','Oxxford','Individualized Shirts','Measure Up','Blue Delta','Cleaner / Repair']},
+      providers:['Gegi','Naziha','In Shop','EA / English American','Oxxford','Individualized Shirts','Measure Up','Blue Delta','Cleaner / Repair'],
+      trello:{enabled:false,boardId:'',boardName:'',boardUrl:'',syncMode:'manual',lastPullAt:'',lastPushAt:'',mappings:{alterationsActive:'',alterationsCompleted:'',inventory:'',rush:'',orders:'',shipments:''}}},
     records:{alterations:[],inventory:[],orders:[],shipments:[],tasks:[],contacts:[],backOffice:[],lookbooks:[]},
     training:{completed:[],scenarioScores:[],startedAt:''},activity:[]
   });
@@ -14,7 +15,7 @@ window.NAH_STORE=(()=>{
   const safeParse=(text)=>{try{return JSON.parse(text)}catch{return null}};
   function normalize(data){
     const base=empty(); if(!data||typeof data!=='object')return base;
-    const out={...base,...data,settings:{...base.settings,...(data.settings||{})},records:{...base.records,...(data.records||{})},training:{...base.training,...(data.training||{})}};
+    const out={...base,...data,settings:{...base.settings,...(data.settings||{}),trello:{...base.settings.trello,...((data.settings||{}).trello||{}),mappings:{...base.settings.trello.mappings,...(((data.settings||{}).trello||{}).mappings||{})}}},records:{...base.records,...(data.records||{})},training:{...base.training,...(data.training||{})}};
     Object.keys(base.records).forEach(k=>{if(!Array.isArray(out.records[k]))out.records[k]=[]});
     if(!Array.isArray(out.activity))out.activity=[];return out;
   }
@@ -26,7 +27,7 @@ window.NAH_STORE=(()=>{
   function upsert(type,record,logMessage=''){
     const item={...record,id:record.id||id(type.slice(0,3)),updatedAt:new Date().toISOString()};
     update(s=>{const arr=s.records[type]||(s.records[type]=[]);const idx=arr.findIndex(x=>x.id===item.id);if(idx>=0)arr[idx]={...arr[idx],...item};else arr.unshift(item);return s},{quiet:true});
-    activity(type,logMessage||`${idxText(record.id)} ${type.slice(0,-1)||type}: ${item.client||item.title||item.name||'record'}`,item.id);return item;
+    activity(type,logMessage||`${idxText(record.id)} ${type.slice(0,-1)||type}: ${item.client||item.title||item.name||'record'}`,item.id);window.dispatchEvent(new CustomEvent('nah:record-upserted',{detail:{type,item}}));return item;
   }
   const idxText=(existing)=>existing?'Updated':'Added';
   function remove(type,id){update(s=>{s.records[type]=(s.records[type]||[]).filter(x=>x.id!==id);return s},{quiet:true});activity(type,`Removed ${type.slice(0,-1)||type}`,id)}

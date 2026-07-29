@@ -22,3 +22,10 @@
 ## Security boundary
 
 The repository contains no credentials or real client records. GitHub Pages should be treated as publicly reachable. Real records entered by the user remain browser-local unless exported. Shared multi-user data, authentication, automated Trello/Excel writes, payroll, bank, or payment information require a secured backend application.
+
+## Trello Integration Edition
+
+- Added Trello Integration Center, authorization return page, REST client, board/list mapping, bulk push, safe pull, conflict detection, per-record sync, and optional automatic push.
+- Trello credentials are intentionally excluded from the workspace schema and backup files.
+- Direct integration requires the deployed site origin to be configured in Trello app administration.
+- Real Trello requests were not executed during static validation because no user credentials were supplied; API behavior should be confirmed against a test board before production use.
