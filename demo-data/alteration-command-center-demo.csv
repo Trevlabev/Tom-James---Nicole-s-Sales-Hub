@@ -1,0 +1,4 @@
+client,order,cof,garment,provider,serviceType,ticketReturnNumber,transferDate,etc,clientRequiredDate,status,location,nextFollowUp,instructions,notes
+Demo Client A,306-0003001,300101,Sport coat,Gegi,Local alteration,T-1001,2026-07-24,2026-07-31,2026-08-02,At Provider,At Gegi,2026-07-30,Deepen armholes and let out HG 1/2 in,Sanitized demonstration
+Demo Client B,306-0003002,300102,Pant,Naziha,Local alteration,T-1002,2026-07-15,2026-07-25,2026-07-30,Reported Complete,At Naziha,2026-07-29,Waist and seat out,Demonstrates reported complete not returned
+Demo Client C,306-0003003,300103,Shirt,Individualized Shirts,Factory alteration,R-1003,2026-07-22,,2026-08-10,At Provider,At Factory,2026-07-30,Shorten sleeves,Demonstrates Needs Date

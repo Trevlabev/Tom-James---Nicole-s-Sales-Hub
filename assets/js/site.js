@@ -66,7 +66,7 @@
     return `<article class="card program-card" data-category="${p.category}">
       <div class="card-top"><div class="program-glyph" aria-hidden="true">${p.glyph}</div><span class="badge ${p.priority === 'Build first' ? 'badge-green' : 'badge-blue'}">${p.priority}</span></div>
       <h3>${p.title}</h3><p>${p.summary}</p>
-      <div class="card-footer"><span class="badge badge-muted">${p.category}</span><a class="text-link" href="${base}programs/${p.slug}/">Open placeholder →</a></div>
+      <div class="card-footer"><span class="badge ${p.status === 'Working v1' ? 'badge-green' : 'badge-muted'}">${p.status}</span><a class="text-link" href="${base}programs/${p.slug}/">${p.status === 'Working v1' ? 'Open program' : 'Open placeholder'} →</a></div>
     </article>`;
   }
 })();

@@ -5,7 +5,7 @@ window.NAH_PROGRAMS = [
     "glyph": "AI",
     "category": "Alterations",
     "priority": "Build first",
-    "status": "Ready to vibe code",
+    "status": "Working v1",
     "summary": "Creates a complete, standardized alteration intake record before a garment leaves the office.",
     "why": "Alteration requests can arrive by email, Trello, photographs, pinned notes, or direct instruction. This tool prevents missing COFs, unclear garment identity, incomplete directions, and untracked custody.",
     "inputs": [
@@ -70,7 +70,7 @@ window.NAH_PROGRAMS = [
     "glyph": "AC",
     "category": "Alterations",
     "priority": "Build first",
-    "status": "Ready to vibe code",
+    "status": "Working v1",
     "summary": "A focused control surface for every active local, factory, cleaner, repair, and completed alteration.",
     "why": "Alterations require control of provider custody, transfer dates, ETCs, reported completion, physical return, client scheduling, and measurement follow-up.",
     "inputs": [
@@ -103,7 +103,7 @@ window.NAH_PROGRAMS = [
     "glyph": "FR",
     "category": "Alterations",
     "priority": "Build first",
-    "status": "Ready to vibe code",
+    "status": "Working v1",
     "summary": "Walks the assistant through Check-in, Return, instruction entry, printing, staging, and next-business-day verification.",
     "why": "Factory returns involve multiple screens, garment-specific rules, short instruction fields, return numbers, and physical staging by destination.",
     "inputs": [
@@ -136,7 +136,7 @@ window.NAH_PROGRAMS = [
     "glyph": "IR",
     "category": "Inventory & Orders",
     "priority": "Build first",
-    "status": "Ready to vibe code",
+    "status": "Working v1",
     "summary": "Matches packing-list items to garments, client records, Trello, Excel, and physical rack locations.",
     "why": "Daily shipments can contain new orders, completed alterations, returns, fabrics, and office inventory. A single box can represent multiple workflows.",
     "inputs": [
@@ -168,7 +168,7 @@ window.NAH_PROGRAMS = [
     "glyph": "WW",
     "category": "Inventory & Orders",
     "priority": "Build first",
-    "status": "Ready to vibe code",
+    "status": "Working v1",
     "summary": "Turns WIP and Watch List reviews into a repeatable investigation and escalation workflow.",
     "why": "The assistant repeatedly checks production milestones, held orders, cloth or lining delays, back orders, late shipments, and client deadlines.",
     "inputs": [

@@ -1,0 +1,4 @@
+type,client,salesProfessional,order,cof,garment,expectedQty,receivedQty,condition,completeness,location,nextAction,notes
+New order,Demo Client A,Nicole Arbogast,306-0001001,100101,Sport coat,1,1,Good,Complete Order,Main Rack,Schedule fitting,Sanitized demonstration row
+Completed alteration,Demo Client B,Nicole Arbogast,306-0001002,100102,Pant,2,1,Good,Partial Order,Receiving Rack,Locate missing pant,Demonstrates quantity discrepancy
+Client return,Demo Client C,Nicole Arbogast,306-0001003,100103,Shirt,1,1,Needs inspection,Not applicable,Factory Return Area,Verify return paperwork,Demonstrates condition exception

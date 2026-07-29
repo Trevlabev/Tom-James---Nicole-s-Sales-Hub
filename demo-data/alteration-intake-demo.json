@@ -1,0 +1,28 @@
+{
+  "schema": "nicole-ops.alteration-intake.v1",
+  "id": "alt-demo-001",
+  "createdAt": "2026-07-29T13:00:00.000Z",
+  "client": "Demo Client A",
+  "salesProfessional": "Nicole Arbogast",
+  "order": "306-0003001",
+  "cof": "300101",
+  "itemId": "001",
+  "garment": "Sport coat",
+  "quantity": 1,
+  "cloth": "Demo cloth 123456",
+  "serviceType": "Local alteration",
+  "provider": "Gegi",
+  "currentLocation": "Alteration Intake",
+  "clientRequiredDate": "2026-08-02",
+  "etc": "2026-07-31",
+  "status": "Intake",
+  "instructions": "Deepen armholes as pinned and let out half girth 1/2 inch.",
+  "notes": "Sanitized demonstration record.",
+  "photos": {
+    "wholeGarment": true,
+    "orderLabel": true,
+    "writtenNotes": true,
+    "closeups": true,
+    "garmentSeparated": true
+  }
+}

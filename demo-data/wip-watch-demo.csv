@@ -1,0 +1,4 @@
+client,order,cof,garment,stage,stageDate,standardDue,clientRequired,exception,source,trelloStatus,excelStatus,factoryResponse,nextFollowUp
+Demo Client A,306-0002001,200101,Sport coat,Manufacturing / Sewing,2026-07-10,2026-07-31,2026-08-03,,Secure Site / WIP,Manufacturing,Manufacturing,Requested completion estimate,2026-07-30
+Demo Client B,306-0002002,200102,Pant,Back Ordered,2026-07-20,2026-07-28,2026-08-01,Back ordered,Watch List,Back Ordered,Released,Awaiting revised ETA,2026-07-29
+Demo Client C,306-0002003,200103,Shirt,Cloth / Lining Hold,2026-07-01,2026-08-15,2026-08-12,Cloth delay,Watch List,Hold,Hold,Mill date not confirmed,2026-07-30
