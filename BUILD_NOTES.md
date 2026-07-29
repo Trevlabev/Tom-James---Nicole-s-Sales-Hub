@@ -1,30 +1,24 @@
-# Working Program Build — July 29, 2026
+# Completed Edition Build Notes
 
-## Implemented
+## Completion status
 
-1. Alteration Intake Builder
-2. Alteration Command Center
-3. Factory Return Helper
-4. Inventory Receipt & Reconciler
-5. WIP & Watch Review Assistant
+- 24 HTML pages total
+- 15 functional program pages
+- Shared local workspace across operational tools
+- Dashboard, Workbench, Daily Operations, Training, Resources, Settings, Deployment, and 404 pages
+- Responsive desktop/mobile presentation
+- Session-only and device-persistent modes
+- Full workspace backup/import
+- Offline service worker and installable web manifest
 
-All five are static-browser v1 applications that work on GitHub Pages without a build step or backend. They use explicit CSV/JSON downloads instead of automatic persistence.
+## Validation performed
 
-## Test coverage
+- JavaScript syntax checked with Node.js for every JS file
+- Local HTML links and resources verified
+- All 23 main/application pages loaded in a Chromium test harness with no page or console errors
+- Demonstration workspace, alteration intake validation/save, and command-center record rendering exercised
+- Desktop and mobile screenshots reviewed
 
-- JavaScript syntax checked with Node.
-- Each page loaded in a headless Chromium test harness with all scripts and styles inlined.
-- Core form generation and table initialization tested.
-- No JavaScript console or page errors observed in the test run.
+## Security boundary
 
-## Demonstration files
-
-Use the sanitized files in `demo-data/` to test imports. Never replace them with real client data inside a public repository.
-
-## Recommended next build sequence
-
-1. Alteration Photo Packager
-2. Shipment & Delivery Desk
-3. Rush & Deadline Monitor
-4. Handoff & Exception Brief Generator
-5. Daily Operations Planner
+The repository contains no credentials or real client records. GitHub Pages should be treated as publicly reachable. Real records entered by the user remain browser-local unless exported. Shared multi-user data, authentication, automated Trello/Excel writes, payroll, bank, or payment information require a secured backend application.

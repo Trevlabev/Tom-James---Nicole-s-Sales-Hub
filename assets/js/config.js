@@ -1,17 +1,15 @@
-window.NAH_CONFIG = {
-  officeName: "Nicole's Operations Hub",
-  officeSubtitle: "A calm control surface for Nicole and her Sales Assistant",
-  storeLabel: "Tom James • Store 306",
-  quickLinks: [
-    { label: "Open Trello", href: "", note: "Add the office board URL" },
-    { label: "Open Excel Tracker", href: "", note: "Add the approved workbook URL" },
-    { label: "Open Calendar", href: "", note: "Add the shared calendar URL" },
-    { label: "Open Manuals", href: "resources.html", note: "Controlled SOP library" }
-  ],
-  resources: [
-    { title: "Full Operations & Training Manual", href: "", type: "PDF", status: "Add approved file or Drive URL" },
-    { title: "Concise Operations & Training Guide", href: "", type: "PDF", status: "Add approved file or Drive URL" },
-    { title: "Alteration Intake Form", href: "", type: "Form", status: "Add approved file or app URL" },
-    { title: "Current Contact Directory", href: "", type: "Controlled", status: "Keep private and verify regularly" }
-  ]
+window.NAH_CONFIG={
+ quickLinks:[
+  {label:'Trello Board',href:'',note:'Open live workflow board'},
+  {label:'Excel Tracker',href:'',note:'Open current office workbook'},
+  {label:'Calendar',href:'',note:'Open Nicole’s calendar'},
+  {label:'Secure Site',href:'https://www.tjsecured.com/',note:'Open Tom James Secure Site'},
+  {label:'Manuals / Drive',href:'',note:'Open approved documentation folder'}
+ ],
+ resources:[
+  {title:'Full Operations & Training Manual',type:'Manual',href:'',status:'Add the approved Drive or hosted-document link.'},
+  {title:'Concise Operations Guide',type:'Quick guide',href:'',status:'Add the approved Drive or hosted-document link.'},
+  {title:'Trello Board',type:'System',href:'',status:'Configure the live board URL.'},
+  {title:'Excel Office Tracker',type:'System',href:'',status:'Configure the approved workbook URL.'}
+ ]
 };
