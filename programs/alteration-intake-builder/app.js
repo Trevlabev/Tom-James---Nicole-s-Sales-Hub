@@ -1,8 +1,269 @@
-(()=>{const U=NAH_APP,R=U.$('#app-root');const state={garments:[{id:NAH_STORE.id('g'),garment:'',cloth:'',quantity:1,instructions:''}],photos:[]};R.innerHTML=`<div class="app-layout"><div class="stack"><section class="card"><div class="card-head"><div><h2>1. Identify the request</h2><p>Required fields protect garment identity, custody, and deadlines.</p></div><span class="badge badge-gold">Alteration intake</span></div><div class="form-grid"><div class="field third"><label class="required">Client</label><input data-f="client"></div><div class="field third"><label>Order</label><input data-f="order"></div><div class="field third"><label class="required">COF</label><input data-f="cof"></div><div class="field third"><label>Sales Professional</label><input data-f="salesProfessional" value="${U.escapeHtml(NAH_STORE.load().settings.salesProfessional)}"></div><div class="field third"><label class="required">Service type</label><select data-f="serviceType"><option>Local alteration</option><option>Factory alteration</option><option>In-shop alteration</option><option>Cleaner / pressing</option><option>Repair / reweaving</option><option>Return / exchange</option></select></div><div class="field third"><label class="required">Provider / destination</label><input data-f="provider" list="providers"></div><div class="field quarter"><label>Received date</label><input data-f="receivedDate" type="date" value="${U.todayIso()}"></div><div class="field quarter"><label>Client-required date</label><input data-f="clientRequiredDate" type="date"></div><div class="field quarter"><label>ETC</label><input data-f="etc" type="date"></div><div class="field quarter"><label>Next follow-up</label><input data-f="nextFollowUp" type="date" value="${U.nextBusinessDay()}"></div><div class="field half"><label class="required">Current physical location</label><select data-f="location" data-locations></select></div><div class="field half"><label>Ticket / return number</label><input data-f="ticketReturnNumber"></div><div class="field full"><label>Client commitment / event</label><input data-f="clientCommitment" placeholder="Fitting, delivery, event, or reason the date matters"></div></div><datalist id="providers">${NAH_STORE.load().settings.providers.map(x=>`<option value="${U.escapeHtml(x)}">`).join('')}</datalist></section><section class="card"><div class="card-head"><div><h2>2. Garments and instructions</h2><p>Separate each garment so similar pieces cannot be confused.</p></div><button class="btn btn-secondary btn-small" data-add-garment>Add garment</button></div><div data-garments></div></section><section class="card"><h2>3. Evidence and handoff</h2><div class="form-grid"><div class="field half"><label>Photograph filenames / descriptions</label><textarea data-f="photoManifest" placeholder="Whole garment; order label; handwritten note; close-up of pinned area…"></textarea></div><div class="field half"><label>Additional notes / uncertainty</label><textarea data-f="notes" placeholder="Anything that must be verified before the garment moves"></textarea></div></div><div class="btn-row"><button class="btn btn-primary" data-save>Validate & save to workspace</button><button class="btn btn-secondary" data-preview>Generate packet</button><button class="btn btn-secondary" data-json>Export JSON</button><button class="btn btn-secondary" data-print>Print</button></div></section><section class="card"><h2>Generated packet</h2><div class="output-box" data-output>Complete the form, then generate the packet.</div></section></div><aside class="stack app-sidebar"><div class="card"><h3>Readiness check</h3><div class="queue-list" data-checks></div></div><div class="callout warning"><strong>Do not move the garment</strong> until the client, exact garment, instructions, and destination are verified.</div></aside></div>`;
-const fields=()=>Object.fromEntries(U.$$('[data-f]').map(x=>[x.dataset.f,x.value.trim()]));const loc=U.$('[data-locations]');loc.innerHTML=NAH_STORE.load().settings.locations.map(x=>`<option>${U.escapeHtml(x)}</option>`).join('');loc.value='Alteration Intake';
-function renderGarments(){U.$('[data-garments]').innerHTML=state.garments.map((g,i)=>`<div class="card no-shadow" style="margin-bottom:10px;background:#faf8f3"><div class="card-head"><strong>Garment ${i+1}</strong>${state.garments.length>1?`<button class="btn btn-danger btn-small" data-remove-g="${g.id}">Remove</button>`:''}</div><div class="form-grid"><div class="field third"><label class="required">Garment</label><input data-g="${g.id}" data-k="garment" value="${U.escapeHtml(g.garment)}"></div><div class="field third"><label>Cloth / identifier</label><input data-g="${g.id}" data-k="cloth" value="${U.escapeHtml(g.cloth)}"></div><div class="field third"><label>Quantity</label><input data-g="${g.id}" data-k="quantity" type="number" min="1" value="${g.quantity}"></div><div class="field full"><label class="required">Exact alteration instructions</label><textarea data-g="${g.id}" data-k="instructions">${U.escapeHtml(g.instructions)}</textarea></div></div></div>`).join('');updateChecks()}
-function validity(){const f=fields(),errors=[];if(!f.client)errors.push('Client required');if(!f.cof)errors.push('COF required');if(!f.provider)errors.push('Provider / destination required');if(!f.location)errors.push('Physical location required');if(!state.garments.length||state.garments.some(g=>!g.garment||!g.instructions))errors.push('Each garment needs identity and instructions');if(f.serviceType==='Factory alteration'&&!f.ticketReturnNumber)errors.push('Factory return number can be added after entry');return {f,errors}}
-function updateChecks(){const {f,errors}=validity();const checks=[['Client / COF',!!f.client&&!!f.cof],['Exact garment identity',state.garments.every(g=>g.garment)],['Instructions by garment',state.garments.every(g=>g.instructions)],['Provider and location',!!f.provider&&!!f.location],['ETC or follow-up',!!f.etc||!!f.nextFollowUp],['Photos / ticket evidence',!!f.photoManifest||!!f.ticketReturnNumber]];U.$('[data-checks]').innerHTML=checks.map(([x,ok])=>`<div class="queue-item"><strong>${ok?'✓':'○'} ${x}</strong></div>`).join('')}
-function record(){const f=fields();return {schema:'nicole-ops.alteration.v2',id:f.id||'',...f,garments:state.garments.map(x=>({...x})),garment:state.garments.map(x=>`${x.quantity}× ${x.garment}`).join('; '),instructions:state.garments.map(x=>`${x.garment}: ${x.instructions}`).join(' | '),status:'Intake',nextAction:f.serviceType==='Factory alteration'?'Complete Secure Site return and stage garment':'Confirm provider handoff and ETC',createdAt:new Date().toISOString()}}
-function packet(r){return [`ALTERATION INTAKE — ${r.client}`,`Order / COF: ${r.order||'—'} / ${r.cof}`,`Service / Provider: ${r.serviceType} / ${r.provider}`,`Location: ${r.location}`,`Received: ${U.formatDate(r.receivedDate)}`,`Client-required: ${U.formatDate(r.clientRequiredDate)}`,`ETC: ${U.formatDate(r.etc)} | Follow-up: ${U.formatDate(r.nextFollowUp)}`,`Ticket / Return #: ${r.ticketReturnNumber||'Pending / not applicable'}`,'',...r.garments.map((g,i)=>`${i+1}. ${g.quantity}× ${g.garment}${g.cloth?` — ${g.cloth}`:''}\n   ${g.instructions}`),'',`Evidence: ${r.photoManifest||'Not listed'}`,`Notes / uncertainty: ${r.notes||'None'}`,`NEXT ACTION: ${r.nextAction}`].join('\n')}
-R.addEventListener('input',e=>{const g=e.target.dataset.g;if(g){const row=state.garments.find(x=>x.id===g);row[e.target.dataset.k]=e.target.type==='number'?Number(e.target.value):e.target.value}updateChecks()});R.addEventListener('click',e=>{if(e.target.closest('[data-add-garment]')){state.garments.push({id:NAH_STORE.id('g'),garment:'',cloth:'',quantity:1,instructions:''});renderGarments()}const rm=e.target.closest('[data-remove-g]');if(rm){state.garments=state.garments.filter(x=>x.id!==rm.dataset.removeG);renderGarments()}if(e.target.closest('[data-preview]'))U.$('[data-output]').textContent=packet(record());if(e.target.closest('[data-save]')){const v=validity();if(v.errors.filter(x=>!x.includes('return number')).length){U.toast(v.errors.join('; '),'error');return}const r=NAH_STORE.upsert('alterations',record(),`Added alteration intake: ${v.f.client}`);U.$('[data-output]').textContent=packet(r);U.toast('Alteration saved to workspace','success')}if(e.target.closest('[data-json]'))U.downloadJson(`alteration-intake-${fields().cof||U.todayIso()}.json`,record());if(e.target.closest('[data-print]'))window.print()});renderGarments()})();
+(()=>{
+  const U=NAH_APP,T=NAH_TRELLO,R=U.$('#app-root');
+  const MAX_FILES=12;
+  const state={files:[],busy:false,lastCard:null};
+  const checklistItems=[
+    'Client identified',
+    'Every circled or referenced garment identified',
+    'Order / COF verified',
+    'Nicole\'s handwriting transcribed exactly',
+    'Instructions separated by garment',
+    'Fit photographs matched to the correct garment',
+    'Secure Site categories determined',
+    'Unknowns and contradictions documented',
+    'Ticket ready for Secure Site entry'
+  ];
+
+  R.innerHTML=`
+    <div class="app-layout">
+      <div class="stack">
+        <section class="card">
+          <div class="card-head">
+            <div><h2>1. Add the source packet</h2><p>The first image becomes the Trello card cover. Add the annotated swatch screenshot first, followed by fitting photographs.</p></div>
+            <span class="badge badge-gold" data-count>0 / ${MAX_FILES}</span>
+          </div>
+          <div class="callout"><strong>One image is enough to create the card.</strong><br>Missing client, garment, measurement, or construction details remain explicitly unresolved rather than being guessed.</div>
+          <div class="btn-row" style="margin-top:14px">
+            <label class="btn btn-primary" for="capture-photo">Take photo</label>
+            <label class="btn btn-secondary" for="select-images">Select images</label>
+            <button class="btn btn-danger" type="button" data-clear-files>Clear images</button>
+          </div>
+          <input id="capture-photo" type="file" accept="image/*" capture="environment" hidden>
+          <input id="select-images" type="file" accept="image/*,.heic,.heif" multiple hidden>
+          <div data-previews style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:18px"></div>
+        </section>
+
+        <section class="card">
+          <div class="card-head"><div><h2>2. Optional identification</h2><p>Leave these blank when the image is all you have. The Trello card will still be created as an unidentified intake.</p></div><span class="badge badge-muted">Optional</span></div>
+          <div class="form-grid">
+            <div class="field half"><label>Client</label><input data-f="client" autocomplete="off" placeholder="Read from image later if unknown"></div>
+            <div class="field quarter"><label>Order</label><input data-f="order" autocomplete="off"></div>
+            <div class="field quarter"><label>COF</label><input data-f="cof" autocomplete="off"></div>
+            <div class="field half"><label>Garment / packet description</label><input data-f="garment" placeholder="Suit, two sport coats, trousers…"></div>
+            <div class="field quarter"><label>Request type</label><select data-f="serviceType"><option>Alteration intake</option><option>Repair / pressing</option><option>Factory / remake</option><option>Unknown request type</option></select></div>
+            <div class="field quarter"><label>Priority</label><select data-f="priority"><option>Normal</option><option>Rush</option><option>Unknown</option></select></div>
+            <div class="field full"><label>Known instruction or note</label><textarea data-f="instructions" placeholder="Optional: paste or type anything already known. The source image remains authoritative."></textarea></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-head"><div><h2>3. Create the Trello intake</h2><p>The card, attachments, and interpretation checklist are created directly in Nicole's mapped Active Alterations list.</p></div><span class="badge badge-muted" data-ready-badge>Not ready</span></div>
+          <div data-connection></div>
+          <div class="btn-row" style="margin-top:14px">
+            <button class="btn btn-primary" type="button" data-create-card>Create Trello intake</button>
+            <label class="checkbox-row"><input type="checkbox" data-open-card checked><span>Open the Trello card after creation</span></label>
+          </div>
+          <div class="progress" style="margin-top:16px"><span data-progress style="width:0%"></span></div>
+          <div class="output-box" data-output>No card has been created.</div>
+        </section>
+      </div>
+
+      <aside class="stack app-sidebar">
+        <section class="card">
+          <h3>What this version guarantees</h3>
+          <div class="queue-list">
+            <div class="queue-item"><strong>✓ Image packet reaches Trello</strong><br><small>Images are uploaded directly from this browser to the created card.</small></div>
+            <div class="queue-item"><strong>✓ No invented information</strong><br><small>Unknown client, garment, measurements, and category decisions remain unknown.</small></div>
+            <div class="queue-item"><strong>✓ Interpretation checklist</strong><br><small>The card shows exactly what must be determined before Secure Site entry.</small></div>
+          </div>
+        </section>
+        <section class="callout warning"><strong>Static-site boundary</strong><br>This GitHub Pages app can create and attach the intake packet. It cannot safely perform full AI handwriting and garment-fit interpretation without an additional protected AI service.</section>
+      </aside>
+    </div>`;
+
+  const fields=()=>Object.fromEntries(U.$$('[data-f]').map(x=>[x.dataset.f,x.value.trim()]));
+  const mappedList=()=>T.getSettings()?.mappings?.alterationsActive||'';
+  const formatBytes=n=>n<1024?`${n} B`:n<1048576?`${(n/1024).toFixed(1)} KB`:`${(n/1048576).toFixed(1)} MB`;
+  const safeName=name=>String(name||'image').replace(/[^a-z0-9._-]+/gi,'-').replace(/-+/g,'-').replace(/^-|-$/g,'')||'image';
+
+  function renderConnection(){
+    const connected=T.isConnected(),settings=T.getSettings(),listId=mappedList();
+    const member=T.getAuth().member;
+    const el=U.$('[data-connection]');
+    if(!connected){
+      el.innerHTML='<div class="callout warning"><strong>Trello is not connected.</strong><br>Open Trello setup, enter the API key, authorize Nicole\'s account, then return here.</div>';
+    }else if(!listId){
+      el.innerHTML='<div class="callout warning"><strong>Active Alterations is not mapped.</strong><br>Open Trello setup and map the Active alterations workflow to the correct Trello list.</div>';
+    }else{
+      el.innerHTML=`<div class="integration-status is-connected"><div><strong>Ready for Trello</strong><span>${U.escapeHtml(member?.fullName||'Authorized user')} • ${U.escapeHtml(settings.boardName||'Selected board')}</span></div><a class="text-link" href="../../trello.html">Review setup →</a></div>`;
+    }
+    const ready=connected&&!!listId&&state.files.length>0&&!state.busy;
+    const badge=U.$('[data-ready-badge]');
+    badge.className=`badge ${ready?'badge-green':'badge-muted'}`;
+    badge.textContent=ready?'Ready':'Not ready';
+    U.$('[data-create-card]').disabled=!ready;
+  }
+
+  function revokePreview(item){if(item.url)URL.revokeObjectURL(item.url)}
+  function addFiles(fileList){
+    const incoming=[...fileList].filter(Boolean);
+    const room=MAX_FILES-state.files.length;
+    if(room<=0){U.toast(`Maximum ${MAX_FILES} images per intake.`,'error');return}
+    if(incoming.length>room)U.toast(`Only the first ${room} additional images were added.`,'error');
+    incoming.slice(0,room).forEach(file=>state.files.push({id:NAH_STORE.id('img'),file,url:URL.createObjectURL(file)}));
+    renderFiles();
+  }
+  function renderFiles(){
+    U.$('[data-count]').textContent=`${state.files.length} / ${MAX_FILES}`;
+    const root=U.$('[data-previews]');
+    root.innerHTML=state.files.length?state.files.map((item,i)=>`
+      <article class="card no-shadow" style="padding:10px;background:#faf8f3">
+        <div style="aspect-ratio:4/3;background:#eee;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:8px">
+          <img src="${item.url}" alt="Selected source ${i+1}" style="width:100%;height:100%;object-fit:contain">
+        </div>
+        <div style="margin-top:8px"><strong>${i===0?'Source / cover':'Fit photo '+i}</strong><br><small>${U.escapeHtml(item.file.name)} • ${formatBytes(item.file.size)}</small></div>
+        <div class="btn-row" style="margin-top:8px">
+          ${i>0?`<button class="btn btn-secondary btn-small" type="button" data-make-first="${item.id}">Make first</button>`:''}
+          <button class="btn btn-danger btn-small" type="button" data-remove-file="${item.id}">Remove</button>
+        </div>
+      </article>`).join(''):'<div class="empty-state" style="grid-column:1/-1">No images selected. Take one photo or choose an annotated screenshot.</div>';
+    renderConnection();
+  }
+
+  async function imageDimensions(file){
+    if(!file.type.startsWith('image/'))return null;
+    try{
+      const bitmap=await createImageBitmap(file);
+      const out={width:bitmap.width,height:bitmap.height};
+      bitmap.close();return out;
+    }catch{return null}
+  }
+  async function prepareUpload(item,index){
+    const file=item.file;
+    const prefix=String(index+1).padStart(2,'0');
+    const originalName=`${prefix}-${safeName(file.name)}`;
+    if(!file.type.startsWith('image/')||/hei[cf]/i.test(file.type)||/\.hei[cf]$/i.test(file.name))return {file,name:originalName};
+    const dimensions=await imageDimensions(file);
+    const shouldCompress=file.size>8*1024*1024||(dimensions&&Math.max(dimensions.width,dimensions.height)>3200);
+    if(!shouldCompress||file.type==='image/png')return {file,name:originalName};
+    try{
+      const bitmap=await createImageBitmap(file);
+      const scale=Math.min(1,2400/Math.max(bitmap.width,bitmap.height));
+      const canvas=document.createElement('canvas');
+      canvas.width=Math.max(1,Math.round(bitmap.width*scale));canvas.height=Math.max(1,Math.round(bitmap.height*scale));
+      canvas.getContext('2d',{alpha:false}).drawImage(bitmap,0,0,canvas.width,canvas.height);bitmap.close();
+      const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',0.88));
+      if(!blob||blob.size>=file.size)return {file,name:originalName};
+      const jpgName=originalName.replace(/\.[^.]+$/,'.jpg');
+      return {file:new File([blob],jpgName,{type:'image/jpeg',lastModified:file.lastModified}),name:jpgName};
+    }catch{return {file,name:originalName}}
+  }
+
+  function buildRecord(){
+    const f=fields(),now=new Date();
+    const client=f.client||'Unidentified Client';
+    const garment=f.garment||'Unidentified garment packet';
+    return {
+      schema:'nicole-ops.alteration-image-intake.v1',
+      id:NAH_STORE.id('alt'),
+      source:'github-pages-image-intake',
+      client,
+      order:f.order,
+      cof:f.cof,
+      garment,
+      serviceType:f.serviceType,
+      priority:f.priority,
+      provider:'Pending review',
+      status:'Needs Interpretation',
+      location:'Trello Intake',
+      instructions:f.instructions||'See attached annotated source image and fitting photographs.',
+      notes:'Created from image packet. No unsupported measurements, garment identities, construction details, or Secure Site categories were inferred.',
+      photoManifest:state.files.map((x,i)=>`${i+1}. ${x.file.name}`).join('\n'),
+      sourceImageCount:state.files.length,
+      nextAction:'Interpret attached source packet; identify garments; translate Nicole\'s instructions; determine Secure Site work blocks; document unknowns.',
+      createdAt:now.toISOString(),
+      updatedAt:now.toISOString()
+    };
+  }
+  function titleFor(r){
+    const stamp=new Date(r.createdAt).toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'numeric'});
+    const cof=r.cof?` | COF ${r.cof}`:'';
+    return `ALTERATION INTAKE | ${r.client} | ${r.garment}${cof} | ${stamp}`.slice(0,512);
+  }
+  function descriptionFor(r){
+    return [
+      `NAH_SYNC|alterations|${r.id}`,
+      '',
+      '## SOURCE PACKET',
+      `Images attached: ${r.sourceImageCount}`,
+      `Submitted: ${new Date(r.createdAt).toLocaleString()}`,
+      `Source: Nicole's Operations Suite — One-Image Alteration Intake`,
+      '',
+      '## IDENTIFICATION',
+      `Client: ${r.client}`,
+      `Order: ${r.order||'Unknown'}`,
+      `COF: ${r.cof||'Unknown'}`,
+      `Garment: ${r.garment}`,
+      `Request Type: ${r.serviceType}`,
+      `Priority: ${r.priority}`,
+      '',
+      '## ORIGINAL / KNOWN INSTRUCTION',
+      r.instructions,
+      '',
+      '## IMAGE MANIFEST',
+      r.photoManifest,
+      '',
+      '## INTERPRETATION STATUS',
+      'Needs Interpretation',
+      '',
+      '## NEXT ACTION',
+      r.nextAction,
+      '',
+      '## SAFETY RULE',
+      'Do not infer missing measurements, garment identity, construction type, instruction scope, or alteration direction. Use the attached images as evidence and document unresolved items.'
+    ].join('\n');
+  }
+
+  async function createCard(){
+    if(state.busy)return;
+    if(!state.files.length){U.toast('Add at least one image.','error');return}
+    if(!T.isConnected()){U.toast('Connect Trello first.','error');return}
+    const listId=mappedList();if(!listId){U.toast('Map the Active Alterations Trello list first.','error');return}
+    state.busy=true;renderConnection();U.$('[data-progress]').style.width='3%';U.$('[data-output]').textContent='Preparing images…';
+    try{
+      const record=buildRecord();
+      const prepared=[];
+      for(let i=0;i<state.files.length;i++){
+        U.$('[data-output]').textContent=`Preparing image ${i+1} of ${state.files.length}…`;
+        prepared.push(await prepareUpload(state.files[i],i));
+        U.$('[data-progress]').style.width=`${Math.round((i+1)/state.files.length*20)}%`;
+      }
+      const result=await T.createIntakeCard({
+        listId,
+        name:titleFor(record),
+        desc:descriptionFor(record),
+        files:prepared,
+        checklistName:'Alteration Intake — Interpretation & Validation',
+        checkItems:checklistItems,
+        onProgress:p=>{
+          U.$('[data-progress]').style.width=`${20+Math.round(p.percent*.8)}%`;
+          U.$('[data-output]').textContent=`Creating Trello intake…\n${p.stage}: ${p.detail}\n${p.percent}% of Trello work complete`;
+        }
+      });
+      const saved={...record,trelloCardId:result.card.id,trelloCardUrl:result.card.url,trelloListId:result.card.idList,trelloLastSyncedAt:new Date().toISOString(),trelloLastActivity:result.card.dateLastActivity||new Date().toISOString()};
+      NAH_STORE.update(s=>{const existing=(s.records.alterations||[]).findIndex(x=>x.id===saved.id);if(existing>=0)s.records.alterations[existing]=saved;else s.records.alterations.unshift(saved);return s},{quiet:true});
+      NAH_STORE.activity('trello',`Created image-based Trello intake: ${record.client}`,record.id);
+      state.lastCard=result.card;U.$('[data-progress]').style.width='100%';
+      const warningText=result.warnings.length?`\n\nWarnings:\n- ${result.warnings.join('\n- ')}`:'';
+      U.$('[data-output]').innerHTML=`<strong>Trello intake created.</strong><br>${result.attachments.length} of ${state.files.length} images attached.<br><a class="text-link" target="_blank" rel="noopener" href="${U.escapeHtml(result.card.url)}">Open ${U.escapeHtml(result.card.name)}</a>${warningText?`<pre style="white-space:pre-wrap;margin-top:12px">${U.escapeHtml(warningText.trim())}</pre>`:''}`;
+      U.toast(result.warnings.length?'Card created with warnings':'Trello intake created',result.warnings.length?'error':'success');
+      if(U.$('[data-open-card]').checked)window.open(result.card.url,'_blank','noopener');
+    }catch(err){
+      console.error(err);U.$('[data-output]').textContent=`Creation failed: ${err.message}`;U.$('[data-progress]').style.width='0%';U.toast(err.message,'error');
+    }finally{state.busy=false;renderConnection()}
+  }
+
+  U.$('#capture-photo').addEventListener('change',e=>{addFiles(e.target.files);e.target.value=''});
+  U.$('#select-images').addEventListener('change',e=>{addFiles(e.target.files);e.target.value=''});
+  R.addEventListener('click',e=>{
+    const remove=e.target.closest('[data-remove-file]');
+    if(remove){const i=state.files.findIndex(x=>x.id===remove.dataset.removeFile);if(i>=0){revokePreview(state.files[i]);state.files.splice(i,1);renderFiles()}return}
+    const first=e.target.closest('[data-make-first]');
+    if(first){const i=state.files.findIndex(x=>x.id===first.dataset.makeFirst);if(i>0){const [item]=state.files.splice(i,1);state.files.unshift(item);renderFiles()}return}
+    if(e.target.closest('[data-clear-files]')){state.files.forEach(revokePreview);state.files=[];renderFiles();return}
+    if(e.target.closest('[data-create-card]'))createCard();
+  });
+  window.addEventListener('nah:trello-auth-change',renderConnection);
+  window.addEventListener('beforeunload',()=>state.files.forEach(revokePreview));
+  renderFiles();
+})();
