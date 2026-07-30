@@ -1,4 +1,173 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#112a43"><link rel="icon" href="assets/img/mark.svg"><link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="assets/css/styles.css"><title>Nicole's Operations Suite</title></head><body data-page="dashboard" data-depth="0"><main id="main"><section class="page-hero"><div class="container hero-grid"><div><div class="eyebrow">Office control center</div><h1>Run the work.<br>Not the chaos.</h1><p class="lead">A finished, local-first operations suite for Nicole and her assistant—alterations, WIP, inventory, shipping, planning, handoffs, training, and every future tool in one place.</p><div class="btn-row" style="margin-top:22px"><a class="btn btn-primary" href="operations.html">Start today's control loop</a><a class="btn btn-secondary" href="programs/">Open all tools</a></div></div><aside class="hero-card"><div class="eyebrow" style="color:#d8bd85">Today</div><h2 data-greeting></h2><p>The dashboard is calculated from the browser workspace. Real records stay on this device or in this tab until exported.</p><div class="grid grid-2"><div><span class="metric-label" style="color:#d6dce2">Workspace records</span><div class="metric-value" style="color:white" data-workspace-count>0</div></div><div><span class="metric-label" style="color:#d6dce2">Open tasks</span><div class="metric-value" style="color:white" data-open-task-count>0</div></div></div><button class="btn btn-gold" type="button" data-load-demo>Load demonstration workspace</button></aside></div></section>
-<section class="section"><div class="container"><div class="grid grid-4" data-dashboard-metrics></div></div></section>
-<section class="section alt"><div class="container dashboard-grid"><div class="stack"><div class="card"><div class="card-head"><div><div class="eyebrow">Priority queue</div><h2>What needs attention</h2></div><a class="text-link" href="workbench.html">Open workbench →</a></div><div class="queue-list" data-risk-queue></div></div><div><div class="section-head"><div><div class="eyebrow">Core applications</div><h2>Tools that move the day</h2></div><a class="text-link" href="programs/">All 15 tools →</a></div><div class="program-grid" data-featured-programs></div></div></div><aside class="stack"><div class="card"><div class="card-head"><div><div class="eyebrow">Recent activity</div><h3>Workspace history</h3></div></div><div class="activity-list" data-activity></div></div><div class="card"><div class="card-head"><div><div class="eyebrow">Trello connection</div><h3>Board synchronization</h3></div><span class="badge badge-muted" data-trello-dashboard-badge>Not connected</span></div><p data-trello-dashboard-copy>Connect Trello to publish workspace records and pull board movement.</p><div class="btn-row"><a class="btn btn-primary" href="trello.html">Open Trello Integration</a><a class="btn btn-secondary" data-trello-board-link target="_blank" rel="noopener" hidden>Open board</a></div></div><div class="card"><div class="eyebrow">Quick launch</div><h3>Connected systems</h3><div class="quick-grid" style="grid-template-columns:1fr" data-quick-links></div></div></aside></div></section>
-<section class="section"><div class="container"><div class="section-head"><div><div class="eyebrow">One operating model</div><h2>The site follows the garment and the commitment</h2></div><p>Each tool connects to the same local workspace so intake can become tracking, tracking can become a handoff, and completed work can leave the active queue.</p></div><div class="workflow"><div class="workflow-step"><span>1. Open</span><h3>Triage</h3><p>Calendar, criticals, Watch List, rush, active alterations.</p></div><div class="workflow-step"><span>2. Receive</span><h3>Control custody</h3><p>Shipments, garments, check-in, physical locations.</p></div><div class="workflow-step"><span>3. Investigate</span><h3>Move work</h3><p>WIP, factories, providers, deadlines, exceptions.</p></div><div class="workflow-step"><span>4. Deliver</span><h3>Prepare outcome</h3><p>Fittings, delivery, pickup, shipping, completion.</p></div><div class="workflow-step"><span>5. Close</span><h3>Reconcile</h3><p>Update systems, stage tomorrow, hand off clearly.</p></div></div></div></section></main><script src="assets/js/workspace.js"></script><script src="assets/js/trello-api.js"></script><script src="assets/js/app-utils.js"></script><script src="assets/js/programs.js"></script><script src="assets/js/config.js"></script><script src="assets/js/shell.js"></script><script src="assets/js/site.js"></script><script src="assets/js/dashboard.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#0f172a">
+  <link rel="icon" href="assets/img/mark.svg">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <title>Nicole's Operations Suite | Sales & Tailoring Control</title>
+</head>
+<body data-page="dashboard" data-depth="0">
+  <main id="main">
+    <section class="page-hero">
+      <div class="container hero-grid">
+        <div>
+          <div class="eyebrow">✨ Executive Control Center</div>
+          <h1>Sales Operations & Tailoring Hub</h1>
+          <p class="lead">A complete, local-first management suite for Nicole Arbogast and her Sales Assistant—alterations, WIP orders, inventory, shipping, handoffs, and daily office workflow in one place.</p>
+          <div class="btn-row" style="margin-top:22px">
+            <a class="btn btn-primary" href="operations.html">⚡ Start Today's Control Loop</a>
+            <a class="btn btn-secondary" href="programs/">🧰 Browse All 15 Tools</a>
+            <button class="btn btn-secondary" type="button" data-glossary-btn>📖 Office Terms Glossary</button>
+          </div>
+        </div>
+        <aside class="hero-card">
+          <div class="eyebrow" style="color:var(--gold-soft)">Today's Overview</div>
+          <h2 data-greeting style="margin-top:4px;">Today</h2>
+          <p>Calculated live from your local browser workspace. Data remains private to this device.</p>
+          <div class="grid grid-2" style="margin:16px 0;">
+            <div>
+              <span class="metric-label" style="color:#cbd5e1">Total Records</span>
+              <div class="metric-value" style="color:white" data-workspace-count>0</div>
+            </div>
+            <div>
+              <span class="metric-label" style="color:#cbd5e1">Open Tasks</span>
+              <div class="metric-value" style="color:white" data-open-task-count>0</div>
+            </div>
+          </div>
+          <button class="btn btn-gold" type="button" data-load-demo style="width:100%;">🚀 Load Sample Office Workspace</button>
+        </aside>
+      </div>
+    </section>
+
+    <!-- Guided Onboarding Section -->
+    <section class="section alt">
+      <div class="container">
+        <div class="welcome-banner">
+          <h2>👋 Welcome to Nicole's Operations Hub</h2>
+          <p>This toolkit keeps track of client custom orders, tailor alterations, inventory arrivals, and shipping deadlines without needing complex external servers.</p>
+          <div class="step-pills">
+            <div class="step-pill"><span class="step-num">1</span> <strong>Load or Add Work:</strong> Click "Load Sample Office Workspace" above to test immediately, or use Alteration Intake.</div>
+            <div class="step-pill"><span class="step-num">2</span> <strong>Daily Ops Loop:</strong> Follow the 5-step daily checklist in Daily Ops every morning.</div>
+            <div class="step-pill"><span class="step-num">3</span> <strong>Track & Sync:</strong> Review Workbench records, update tailor ETC dates, and sync with Trello.</div>
+          </div>
+        </div>
+
+        <div class="grid grid-4" data-dashboard-metrics></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container dashboard-grid">
+        <div class="stack">
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <div class="eyebrow">Priority Queue</div>
+                <h2>What Needs Attention Today</h2>
+              </div>
+              <a class="text-link" href="workbench.html">View Workbench →</a>
+            </div>
+            <div class="queue-list" data-risk-queue></div>
+          </div>
+
+          <div>
+            <div class="section-head">
+              <div>
+                <div class="eyebrow">Core Applications</div>
+                <h2>Tools That Move the Day</h2>
+              </div>
+              <a class="text-link" href="programs/">All 15 Tools →</a>
+            </div>
+            <div class="program-grid" data-featured-programs></div>
+          </div>
+        </div>
+
+        <aside class="stack">
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <div class="eyebrow">Workspace History</div>
+                <h3>Recent Activity</h3>
+              </div>
+            </div>
+            <div class="activity-list" data-activity></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <div class="eyebrow">Trello Board Sync</div>
+                <h3>Board Connection</h3>
+              </div>
+              <span class="badge badge-muted" data-trello-dashboard-badge>Not connected</span>
+            </div>
+            <p data-trello-dashboard-copy>Connect Trello to publish workspace records and track board movement.</p>
+            <div class="btn-row" style="margin-top:14px;">
+              <a class="btn btn-primary btn-small" href="trello.html">Configure Trello</a>
+              <a class="btn btn-secondary btn-small" data-trello-board-link target="_blank" rel="noopener" hidden>Open Board</a>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="eyebrow">Quick Launch</div>
+            <h3>Approved External Systems</h3>
+            <div class="quick-grid" style="grid-template-columns:1fr; margin-top:10px;" data-quick-links></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section alt">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">5-Step Daily Operating Model</div>
+            <h2>How the Garment & Order Move Through the Office</h2>
+          </div>
+          <p>Every tool connects to the same local browser workspace so intake becomes tracking, tracking becomes a handoff, and finished garments leave the active queue cleanly.</p>
+        </div>
+        <div class="workflow">
+          <div class="workflow-step">
+            <span>Step 1</span>
+            <h3>Triage</h3>
+            <p>Review calendar fittings, critical alterations, Watch List delays, and rush orders.</p>
+          </div>
+          <div class="workflow-step">
+            <span>Step 2</span>
+            <h3>Receive</h3>
+            <p>Check in incoming shipments, tag garments, and log physical rack storage locations.</p>
+          </div>
+          <div class="workflow-step">
+            <span>Step 3</span>
+            <h3>Investigate</h3>
+            <p>Follow up with tailors (Gegi, Naziha) and factories on stalled WIP orders and ETC dates.</p>
+          </div>
+          <div class="workflow-step">
+            <span>Step 4</span>
+            <h3>Deliver</h3>
+            <p>Prepare client delivery, schedule fitting appointments, and generate shipping labels.</p>
+          </div>
+          <div class="workflow-step">
+            <span>Step 5</span>
+            <h3>Reconcile</h3>
+            <p>Update local records, stage tomorrow's rack, and copy the Daily Handoff Brief.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="assets/js/workspace.js"></script>
+  <script src="assets/js/trello-api.js"></script>
+  <script src="assets/js/app-utils.js"></script>
+  <script src="assets/js/programs.js"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/shell.js"></script>
+  <script src="assets/js/site.js"></script>
+  <script src="assets/js/dashboard.js"></script>
+</body>
+</html>

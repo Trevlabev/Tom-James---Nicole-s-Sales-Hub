@@ -1,1 +1,110 @@
-(()=>{const U=NAH_APP;const type=U.$('[data-workbench-type]'),search=U.$('[data-workbench-search]'),tbody=U.$('[data-workbench-table]');const labels={alterations:'Alteration',inventory:'Inventory',orders:'Order / WIP',shipments:'Shipment',tasks:'Task',contacts:'Contact',backOffice:'Back-office',lookbooks:'Lookbook'};type.innerHTML='<option value="">All record types</option>'+Object.entries(labels).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');function summary(k,r){return [r.client,r.title,r.name,r.garment,r.order,r.contents].filter(Boolean).join(' — ')||r.id}function status(r){return [r.priority,r.status,r.location,r.stage].filter(Boolean).join(' • ')||'Active'}function date(r){return r.nextFollowUp||r.clientRequiredDate||r.etc||r.dueDate||r.shipByDate||''}function render(){const s=NAH_STORE.load(),st=NAH_STORE.stats(s);U.$('[data-workbench-metrics]').innerHTML=[['All records',st.total,'Across every tool'],['Active alterations',st.activeAlt,`${st.criticalAlt} critical`],['Order risks',st.riskOrders,'WIP and deadlines'],['Open shipments',st.shippingOpen,'Through delivery']].map(([a,b,c])=>`<div class="metric-card"><div class="metric-label">${a}</div><div class="metric-value">${b}</div><div class="metric-detail">${c}</div></div>`).join('');const q=search.value.toLowerCase(),t=type.value,rows=[];Object.entries(s.records).forEach(([k,arr])=>{if(t&&t!==k)return;arr.forEach(r=>{if(!q||JSON.stringify(r).toLowerCase().includes(q))rows.push({k,r})})});tbody.innerHTML=rows.length?rows.map(({k,r})=>`<tr><td><span class="badge badge-blue">${labels[k]||k}</span></td><td><strong>${U.escapeHtml(summary(k,r))}</strong><br><small>${U.escapeHtml(r.nextAction||r.notes||'')}</small></td><td>${U.escapeHtml(status(r))}</td><td>${date(r)?U.formatDate(date(r)):'—'}</td><td>${r.updatedAt?new Date(r.updatedAt).toLocaleString():'—'}</td><td><button class="btn btn-danger btn-small" data-remove="${r.id}" data-type="${k}">Remove</button></td></tr>`).join(''):'<tr><td colspan="6"><div class="empty-state">No records match the current filters.</div></td></tr>'}tbody.addEventListener('click',e=>{const b=e.target.closest('[data-remove]');if(b&&confirm('Remove this record from the browser workspace?'))NAH_STORE.remove(b.dataset.type,b.dataset.remove)});type.addEventListener('change',render);search.addEventListener('input',render);U.$('[data-export-workspace]').addEventListener('click',()=>U.downloadText(`nicole-operations-workspace-${U.todayIso()}.json`,NAH_STORE.exportWorkspace(),'application/json;charset=utf-8'));U.$('[data-import-workspace]').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{NAH_STORE.importWorkspace(await U.readFileText(f));U.toast('Workspace imported','success')}catch(err){U.toast(err.message,'error')}e.target.value=''});U.$('[data-clear-workspace]').addEventListener('click',()=>{if(confirm('Clear every record in this browser workspace? Export a backup first.')){NAH_STORE.clear();U.toast('Workspace cleared','success')}});window.addEventListener('nah:workspace-change',render);render()})();
+(() => {
+  const U = NAH_APP;
+  const type = U.$('[data-workbench-type]'), search = U.$('[data-workbench-search]'), tbody = U.$('[data-workbench-table]');
+  const labels = {
+    alterations: '✂️ Alteration',
+    inventory: '📦 Inventory',
+    orders: '📊 WIP Order',
+    shipments: '🚚 Shipment',
+    tasks: '📝 Task',
+    contacts: '📞 Contact',
+    backOffice: '💼 Back-Office',
+    lookbooks: '🎨 Lookbook'
+  };
+
+  type.innerHTML = '<option value="">All Categories</option>' + Object.entries(labels).map(([k, v]) => `<option value="${k}">${v}</option>`).join('');
+
+  function summary(k, r) {
+    return [r.client, r.title, r.name, r.garment, r.order, r.contents].filter(Boolean).join(' — ') || r.id;
+  }
+
+  function status(r) {
+    return [r.priority ? `[${r.priority}]` : null, r.status, r.location, r.stage].filter(Boolean).join(' • ') || 'Active';
+  }
+
+  function date(r) {
+    return r.nextFollowUp || r.clientRequiredDate || r.etc || r.dueDate || r.shipByDate || '';
+  }
+
+  function render() {
+    const s = NAH_STORE.load(), st = NAH_STORE.stats(s);
+    U.$('[data-workbench-metrics]').innerHTML = [
+      ['Total Records', st.total, 'Across all 15 tools'],
+      ['Active Alterations', st.activeAlt, `${st.criticalAlt} critical risk`],
+      ['WIP Order Risks', st.riskOrders, 'Factory & deadline holds'],
+      ['Open Shipments', st.shippingOpen, 'Ready to process']
+    ].map(([a, b, c]) => `
+      <div class="metric-card">
+        <div class="metric-label">${a}</div>
+        <div class="metric-value">${b}</div>
+        <div class="metric-detail">${c}</div>
+      </div>
+    `).join('');
+
+    const q = search.value.toLowerCase(), t = type.value, rows = [];
+    Object.entries(s.records).forEach(([k, arr]) => {
+      if (t && t !== k) return;
+      arr.forEach(r => {
+        if (!q || JSON.stringify(r).toLowerCase().includes(q)) rows.push({ k, r });
+      });
+    });
+
+    tbody.innerHTML = rows.length ? rows.map(({ k, r }) => `
+      <tr>
+        <td><span class="badge badge-blue">${labels[k] || k}</span></td>
+        <td>
+          <strong>${U.escapeHtml(summary(k, r))}</strong><br>
+          <small style="color:var(--muted);">${U.escapeHtml(r.nextAction || r.notes || 'No next action logged')}</small>
+        </td>
+        <td>${U.escapeHtml(status(r))}</td>
+        <td>${date(r) ? U.formatDate(date(r)) : '—'}</td>
+        <td>${r.updatedAt ? new Date(r.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '—'}</td>
+        <td><button class="btn btn-danger btn-small" data-remove="${r.id}" data-type="${k}">Remove</button></td>
+      </tr>
+    `).join('') : `
+      <tr>
+        <td colspan="6">
+          <div class="empty-state">No records match the selected filters. Use an application or load sample data.</div>
+        </td>
+      </tr>
+    `;
+  }
+
+  tbody.addEventListener('click', e => {
+    const b = e.target.closest('[data-remove]');
+    if (b && confirm('Remove this record from the browser workspace?')) {
+      NAH_STORE.remove(b.dataset.type, b.dataset.remove);
+      U.toast('Record removed', 'success');
+    }
+  });
+
+  type.addEventListener('change', render);
+  search.addEventListener('input', render);
+
+  U.$('[data-export-workspace]').addEventListener('click', () => {
+    U.downloadText(`nicole-operations-workspace-${U.todayIso()}.json`, NAH_STORE.exportWorkspace(), 'application/json;charset=utf-8');
+    U.toast('Full workspace backup exported', 'success');
+  });
+
+  U.$('[data-import-workspace]').addEventListener('change', async e => {
+    const f = e.target.files[0];
+    if (!f) return;
+    try {
+      NAH_STORE.importWorkspace(await U.readFileText(f));
+      U.toast('Workspace backup imported successfully!', 'success');
+    } catch (err) {
+      U.toast(err.message, 'error');
+    }
+    e.target.value = '';
+  });
+
+  U.$('[data-clear-workspace]').addEventListener('click', () => {
+    if (confirm('Are you sure you want to clear ALL workspace records in this browser? (Make sure to export a backup first!)')) {
+      NAH_STORE.clear();
+      U.toast('Workspace cleared', 'success');
+    }
+  });
+
+  window.addEventListener('nah:workspace-change', render);
+  render();
+})();

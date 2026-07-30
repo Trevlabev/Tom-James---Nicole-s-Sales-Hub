@@ -1,1 +1,71 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><link rel="icon" href="assets/img/mark.svg"><link rel="stylesheet" href="assets/css/styles.css"><title>Daily Operations | Nicole's Operations Suite</title></head><body data-page="operations" data-depth="0"><main id="main"><section class="page-hero compact"><div class="container"><div class="eyebrow">Daily control loop</div><h1>Run today in the right order.</h1><p class="lead">The checklist adapts to the day of week and workspace risks. Complete it here, then generate the final handoff from the Handoff Brief tool.</p></div></section><section class="section"><div class="container dashboard-grid"><div class="stack"><div class="card"><div class="card-head"><div><h2 data-ops-date></h2><p>Critical work overrides the standard cadence.</p></div><button class="btn btn-secondary" data-reset-ops>Reset today</button></div><div data-ops-checklist></div></div><div class="card"><div class="card-head"><div><h2>Workspace-generated priorities</h2><p>Live items requiring action based on dates, location, and status.</p></div></div><div class="queue-list" data-ops-priority></div></div></div><aside class="stack"><div class="card"><div class="eyebrow">Day plan</div><h3 data-ops-focus></h3><div class="progress"><span data-ops-progress style="width:0%"></span></div><p data-ops-progress-label></p><a class="btn btn-primary" href="programs/daily-operations-planner/">Build a detailed plan</a></div><div class="card"><h3>Close the day</h3><p>Use the brief generator after updates are complete.</p><a class="btn btn-secondary" href="programs/handoff-brief-generator/">Generate handoff</a></div></aside></div></section></main><script src="assets/js/workspace.js"></script><script src="assets/js/trello-api.js"></script><script src="assets/js/app-utils.js"></script><script src="assets/js/shell.js"></script><script src="assets/js/operations.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="icon" href="assets/img/mark.svg">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <title>Daily Operations | Nicole's Operations Suite</title>
+</head>
+<body data-page="operations" data-depth="0">
+  <main id="main">
+    <section class="page-hero compact">
+      <div class="container">
+        <div class="eyebrow">⚡ Daily Office Control Loop</div>
+        <h1>Run Today in the Right Cadence</h1>
+        <p class="lead">Follow the dynamic checklist below tailored to today's day of week and active workspace priorities. Complete your checks, then generate the Daily Handoff Brief.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container dashboard-grid">
+        <div class="stack">
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h2 data-ops-date>Today's Checklist</h2>
+                <p>Check items off as you complete morning triage, tailor follow-ups, and rack check-ins.</p>
+              </div>
+              <button class="btn btn-secondary btn-small" data-reset-ops>↺ Reset Today's Checklist</button>
+            </div>
+            <div data-ops-checklist></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <div class="eyebrow">Priority Queue</div>
+                <h2>Live Workspace Items Needing Action</h2>
+              </div>
+            </div>
+            <div class="queue-list" data-ops-priority></div>
+          </div>
+        </div>
+
+        <aside class="stack">
+          <div class="card">
+            <div class="eyebrow">Daily Progress</div>
+            <h3 data-ops-focus>Day Plan Progress</h3>
+            <div class="progress" style="margin:12px 0;"><span data-ops-progress style="width:0%"></span></div>
+            <p data-ops-progress-label style="font-size:0.86rem; font-weight:600; color:var(--navy);"></p>
+            <a class="btn btn-primary" href="programs/daily-operations-planner/" style="margin-top:14px; width:100%;">🗓️ Build Detailed Day Plan</a>
+          </div>
+
+          <div class="card">
+            <h3>📝 End-of-Day Handoff</h3>
+            <p>Generate a copy-paste summary of today's progress, active risks, and tomorrow's priorities for Nicole.</p>
+            <a class="btn btn-secondary" href="programs/handoff-brief-generator/" style="margin-top:12px; width:100%;">Generate Daily Brief →</a>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <script src="assets/js/workspace.js"></script>
+  <script src="assets/js/trello-api.js"></script>
+  <script src="assets/js/app-utils.js"></script>
+  <script src="assets/js/shell.js"></script>
+  <script src="assets/js/operations.js"></script>
+</body>
+</html>

@@ -1,1 +1,60 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><link rel="icon" href="../assets/img/mark.svg"><link rel="stylesheet" href="../assets/css/styles.css"><title>Programs | Nicole's Operations Suite</title></head><body data-page="programs" data-depth="1"><main id="main"><section class="page-hero compact"><div class="container"><div class="eyebrow">Included applications</div><h1>One suite. Fifteen focused tools.</h1><p class="lead">Every page is functional. Tools share the local workspace, support imports and exports, and are organized around the actual office workflow rather than generic software categories.</p></div></section><section class="section"><div class="container"><div class="card no-shadow"><div class="form-grid"><div class="field half"><label for="program-search">Search tools</label><input id="program-search" data-program-search placeholder="alterations, shipping, training…"></div><div class="field half"><label for="program-category">Workflow</label><select id="program-category" data-program-category></select></div></div><p class="help" data-program-count></p></div><div class="program-grid" style="margin-top:18px" data-program-catalog></div></div></section></main><script src="../assets/js/workspace.js"></script><script src="../assets/js/trello-api.js"></script><script src="../assets/js/app-utils.js"></script><script src="../assets/js/programs.js"></script><script src="../assets/js/config.js"></script><script src="../assets/js/shell.js"></script><script src="../assets/js/site.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="icon" href="../assets/img/mark.svg">
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <title>All Applications | Nicole's Operations Suite</title>
+</head>
+<body data-page="programs" data-depth="1">
+  <main id="main">
+    <section class="page-hero compact">
+      <div class="container">
+        <div class="eyebrow">🧰 Operations Toolkit</div>
+        <h1>15 Focused Applications for Tailoring & Sales</h1>
+        <p class="lead">Every tool connects to your local browser workspace. Select a category below or search by keyword to launch any application.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <!-- Category Filter Tabs -->
+        <div class="cat-tabs" data-category-tabs>
+          <button class="cat-tab active" data-cat="">All 15 Tools</button>
+          <button class="cat-tab" data-cat="Alterations">✂️ Alterations</button>
+          <button class="cat-tab" data-cat="Orders & Inventory">📦 Orders & Inventory</button>
+          <button class="cat-tab" data-cat="Logistics">🚚 Logistics & Delivery</button>
+          <button class="cat-tab" data-cat="Daily Operations">📋 Daily Operations</button>
+          <button class="cat-tab" data-cat="Training & Support">🎓 Training & Guides</button>
+        </div>
+
+        <div class="card no-shadow" style="background:var(--white); margin-bottom:24px;">
+          <div class="form-grid">
+            <div class="field half">
+              <label for="program-search">Search Applications</label>
+              <input id="program-search" data-program-search placeholder="Type keyword: alteration, tracking, shipping, tailoring, fittings...">
+            </div>
+            <div class="field half">
+              <label for="program-category">Workflow Category</label>
+              <select id="program-category" data-program-category></select>
+            </div>
+          </div>
+          <p class="help" data-program-count style="margin-top:10px; font-weight:600; color:var(--navy);"></p>
+        </div>
+
+        <div class="program-grid" data-program-catalog></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="../assets/js/workspace.js"></script>
+  <script src="../assets/js/trello-api.js"></script>
+  <script src="../assets/js/app-utils.js"></script>
+  <script src="../assets/js/programs.js"></script>
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/shell.js"></script>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>
