@@ -27,6 +27,32 @@
     `).join('');
   }
 
+  function renderTrelloStatus() {
+    const ts = window.NAH_TRELLO?.getSettings?.() || {};
+    const connected = window.NAH_TRELLO?.isConnected?.();
+    const tb = document.querySelector('[data-trello-dashboard-badge]');
+    const tc = document.querySelector('[data-trello-dashboard-copy]');
+    const tl = document.querySelector('[data-trello-board-link]');
+
+    if (tb) {
+      tb.className = `badge ${connected && ts.enabled ? 'badge-green' : connected ? 'badge-amber' : 'badge-muted'}`;
+      tb.textContent = connected && ts.enabled ? 'Sync Enabled' : connected ? 'Authorized' : 'Not Connected';
+    }
+    if (tc) {
+      tc.textContent = connected
+        ? (ts.boardName ? `Connected to "${ts.boardName}"${ts.syncMode === 'auto' ? ' with automatic sync.' : ' (Manual mode).'}` : 'Select and map a board in Trello Settings.')
+        : 'Connect Trello to publish workspace records and track board movement.';
+    }
+    if (tl) {
+      if (ts.boardId && ts.boardUrl) {
+        tl.href = ts.boardUrl;
+        tl.hidden = false;
+      } else {
+        tl.hidden = true;
+      }
+    }
+  }
+
   function render() {
     const s = NAH_STORE.load(), st = NAH_STORE.stats(s), now = new Date();
     const greetingEl = document.querySelector('[data-greeting]');
@@ -102,6 +128,7 @@
     if (taskEl) taskEl.textContent = st.tasksOpen;
 
     renderFeaturedPrograms();
+    renderTrelloStatus();
   }
 
   // Bind glossary button
@@ -117,7 +144,10 @@
       return d.toISOString().slice(0, 10);
     };
 
+    const currentSettings = NAH_STORE.load().settings;
     const s = NAH_STORE.empty();
+    s.settings = currentSettings; // Preserve user's Trello and office settings!
+
     s.records.alterations = [
       { id: 'demo-a1', client: 'Jordan Ellis', order: '306-0248101', cof: '248101', garment: 'Navy suit coat', provider: 'Gegi', serviceType: 'Local alteration', transferDate: plus(-8), etc: plus(1), clientRequiredDate: plus(3), status: 'At Provider', location: 'At Gegi', nextFollowUp: today, nextAction: 'Confirm ETC and pickup' },
       { id: 'demo-a2', client: 'Morgan Lee', order: '306-0248120', cof: '248120', garment: 'Custom Trousers', provider: 'EA / English American', serviceType: 'Factory alteration', transferDate: plus(-14), etc: plus(-1), clientRequiredDate: plus(4), status: 'Reported Complete', location: 'At Factory', nextFollowUp: today, nextAction: 'Obtain tracking number' }
@@ -141,5 +171,6 @@
   });
 
   window.addEventListener('nah:workspace-change', render);
+  window.addEventListener('nah:trello-auth-change', render);
   render();
 })();
