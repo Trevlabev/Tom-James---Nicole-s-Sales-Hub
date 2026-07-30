@@ -18,12 +18,15 @@ window.NAH_TRELLO=(()=>{
   const clearAuth=()=>{sessionStorage.removeItem(AUTH_KEY);window.dispatchEvent(new CustomEvent('nah:trello-auth-change',{detail:{connected:false}}));};
   const isConnected=()=>{const a=getAuth();return !!(a.apiKey&&a.token)};
   const authHeader=()=>{const a=getAuth();if(!a.apiKey||!a.token)throw new Error('Trello is not connected.');return `OAuth oauth_consumer_key="${a.apiKey}", oauth_token="${a.token}"`};
-  async function request(path,{method='GET',params={},body=null}={}){
+
+  async function request(path,{method='GET',params={},body=null,formData=null}={}){
+    if(body!==null&&formData!==null)throw new Error('A Trello request cannot use JSON and FormData at the same time.');
     const url=new URL(`${API_ROOT}/${String(path).replace(/^\//,'')}`);
     Object.entries(params||{}).forEach(([k,v])=>{if(v!==undefined&&v!==null&&v!=='')url.searchParams.set(k,String(v))});
     const headers={Authorization:authHeader(),Accept:'application/json'};
     const opts={method,headers};
     if(body!==null){headers['Content-Type']='application/json';opts.body=JSON.stringify(body)}
+    if(formData!==null)opts.body=formData;
     let res;
     try{res=await fetch(url,opts)}catch(err){throw new Error(`Could not reach Trello: ${err.message}`)}
     const text=await res.text();const data=text?safeParse(text)||text:null;
@@ -34,6 +37,7 @@ window.NAH_TRELLO=(()=>{
     }
     return data;
   }
+
   function authorize({apiKey,expiration='30days',scope='read,write',rememberKey=false}={}){
     if(!apiKey) return Promise.reject(new Error('Enter a Trello API key first.'));
     sessionStorage.setItem(AUTH_KEY,JSON.stringify({apiKey,token:'',member:null,connectedAt:''}));
@@ -67,6 +71,7 @@ window.NAH_TRELLO=(()=>{
       timer=setInterval(()=>{if(popup.closed){cleanup();reject(new Error('Trello authorization was closed before completion.'))}},700);
     });
   }
+
   const me=()=>request('members/me',{params:{fields:'id,fullName,username,avatarUrl'}});
   const boards=()=>request('members/me/boards',{params:{fields:'id,name,url,closed,dateLastActivity',filter:'open'}});
   const board=boardId=>request(`boards/${boardId}`,{params:{fields:'id,name,url,closed,dateLastActivity'}});
@@ -75,6 +80,49 @@ window.NAH_TRELLO=(()=>{
   const createCard=data=>request('cards',{method:'POST',body:data});
   const updateCard=(id,data)=>request(`cards/${id}`,{method:'PUT',body:data});
   const addComment=(id,text)=>request(`cards/${id}/actions/comments`,{method:'POST',body:{text}});
+  const createChecklist=(cardId,name,pos='bottom')=>request(`cards/${cardId}/checklists`,{method:'POST',params:{name,pos}});
+  const addCheckItem=(checklistId,name,{pos='bottom',checked=false}={})=>request(`checklists/${checklistId}/checkItems`,{method:'POST',params:{name,pos,checked}});
+  async function uploadAttachment(cardId,file,{name=file?.name||'attachment',setCover=false}={}){
+    if(!(file instanceof Blob))throw new Error('Attachment must be a File or Blob.');
+    const data=new FormData();
+    data.append('file',file,name);
+    data.append('name',name);
+    data.append('setCover',setCover?'true':'false');
+    return request(`cards/${cardId}/attachments`,{method:'POST',formData:data});
+  }
+  async function createIntakeCard({listId,name,desc,files=[],checklistName='Alteration Intake',checkItems=[],onProgress}={}){
+    if(!listId)throw new Error('No Trello intake list is mapped.');
+    if(!name)throw new Error('Card name is required.');
+    const card=await createCard({idList:listId,name,desc,pos:'top'});
+    const result={card,attachments:[],checklist:null,checkItems:[],warnings:[]};
+    const total=files.length+checkItems.length+1;
+    let completed=0;
+    const report=(stage,detail='')=>{completed++;if(onProgress)onProgress({stage,detail,completed,total,percent:Math.min(100,Math.round(completed/Math.max(total,1)*100)),card})};
+    for(let i=0;i<files.length;i++){
+      const item=files[i];
+      try{
+        const attachment=await uploadAttachment(card.id,item.file||item,{name:item.name||(item.file||item).name,setCover:i===0});
+        result.attachments.push(attachment);
+      }catch(err){result.warnings.push(`Attachment ${i+1} failed: ${err.message}`)}
+      report('attachment',item.name||(item.file||item).name||`Image ${i+1}`);
+    }
+    if(checkItems.length){
+      try{
+        result.checklist=await createChecklist(card.id,checklistName,'bottom');
+        report('checklist',checklistName);
+        for(const text of checkItems){
+          try{result.checkItems.push(await addCheckItem(result.checklist.id,text))}catch(err){result.warnings.push(`Checklist item failed: ${text} — ${err.message}`)}
+          report('check-item',text);
+        }
+      }catch(err){
+        result.warnings.push(`Checklist creation failed: ${err.message}`);
+        report('checklist',checklistName);
+        for(const text of checkItems)report('check-item',text);
+      }
+    }else report('checklist','No checklist requested');
+    return result;
+  }
+
   const getSettings=()=>NAH_STORE.load().settings.trello||NAH_STORE.empty().settings.trello;
   const updateSettings=patch=>NAH_STORE.update(s=>{s.settings.trello={...s.settings.trello,...patch,mappings:{...s.settings.trello.mappings,...(patch.mappings||{})}};return s},{quiet:true});
   const mappedList=(type,r={})=>{
@@ -144,7 +192,7 @@ window.NAH_TRELLO=(()=>{
   }
   async function pull({strategy='safe'}={}){
     const preview=await previewPull();const state=NAH_STORE.load();let imported=0,updated=0,skipped=0;
-    for(const item of preview.cards){const {card,role,type,mark,local,status}=item;if(!type){skipped++;continue}
+    for(const item of preview.cards){const {card,role,type,local,status}=item;if(!type){skipped++;continue}
       if(status==='conflict'&&strategy==='safe'){skipped++;continue}
       if(local){
         const f=parseFields(card.desc);const patch={trelloCardId:card.id,trelloCardUrl:card.url,trelloListId:card.idList,trelloLastActivity:card.dateLastActivity,trelloLastSyncedAt:new Date().toISOString()};
@@ -162,5 +210,5 @@ window.NAH_TRELLO=(()=>{
     updateSettings({lastPullAt:new Date().toISOString()});NAH_STORE.activity('trello',`Pulled Trello board: ${imported} imported, ${updated} updated, ${skipped} skipped`);return {preview,imported,updated,skipped};
   }
   window.addEventListener('nah:record-upserted',event=>{const settings=getSettings();if(settings.enabled&&settings.syncMode==='auto'&&isConnected())syncRecord(event.detail.type,event.detail.item).catch(err=>console.warn('Trello auto-sync failed',err))});
-  return {getAuth,setAuth,clearAuth,isConnected,authorize,request,me,boards,board,lists,cards,createCard,updateCard,addComment,getSettings,updateSettings,mappedList,cardTitle,cardDescription,marker,parseFields,syncRecord,syncAll,previewPull,pull};
+  return {getAuth,setAuth,clearAuth,isConnected,authorize,request,me,boards,board,lists,cards,createCard,updateCard,addComment,createChecklist,addCheckItem,uploadAttachment,createIntakeCard,getSettings,updateSettings,mappedList,cardTitle,cardDescription,marker,parseFields,syncRecord,syncAll,previewPull,pull};
 })();
